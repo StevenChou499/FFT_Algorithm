@@ -4,21 +4,26 @@
 #include <math.h>
 
 typedef struct complex {
-    double x;
-    double y;
+    double real;
+    double imag;
 } complex;
 
-// conjugate an array of complex number
-complex *conjugate(complex *cpx, unsigned Num);
+typedef struct sequence {
+    complex *arr;
+    unsigned len;
+} sequence;
+
+// conjugate a sequence
+sequence *conjugate(sequence *sqen);
 
 // an array of complex addition 
-complex *complex_add(complex *a, complex *b, unsigned Num);
+sequence *complex_add(sequence *a, sequence *b);
 
 // an array of complex subtraction
-complex *complex_sub(complex *a, complex *b, unsigned Num);
+sequence *complex_sub(sequence *a, sequence *b);
 
 // an array of complex multiplication
-complex *complex_mul(complex *a, complex *b, unsigned Num);
+sequence *complex_mul(sequence *a, sequence *b);
 
 // weighting function
 complex W(unsigned r, unsigned N);

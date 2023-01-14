@@ -1,26 +1,40 @@
 #include "fft.h"
+#include <stdio.h>
 
-complex *conjugate(complex *cpx, unsigned Num) {
-    for (unsigned index = 0; index < Num; index++) {
-        (cpx + index)->y = -(cpx + index)->y;
+sequence *conjugate(sequence *sqen) {
+    if (sqen->len == 0) {
+        fprintf(stderr, "The length of the seqence is zero\n");
+        return sqen;
     }
-    return cpx;
+    for (unsigned index = 0; index < sqen->len; index++) {
+        (sqen->arr + index)->imag = -(sqen->arr + index)->imag;
+    }
+    return sqen;
 }
 
-complex *complex_add(complex *a, complex *b, unsigned Num) {
-    complex *sum = malloc(sizeof(complex) * Num);
-    for (unsigned index = 0; index < Num; index++) {
-        (sum + index)->x = (a + index)->x + (b + index)->x;
-        (sum + index)->y = (a + index)->y + (b + index)->y;        
+sequence *complex_add(sequence *a, sequence *b) {
+    if (a->len != b->len) {
+        fprintf(stderr, "The length of sequence a and sequence b isn't the same\n");
+        return NULL;
+    }
+    sequence *sum = malloc(sizeof(sequence) * a->len);
+    for (unsigned index = 0; index < a->len; index++) {
+        (sum->arr + index)->real = (a->arr + index)->real + (b->arr + index)->real;
+        (sum->arr + index)->imag = (a->arr + index)->imag + (b->arr + index)->imag;        
     }
     return sum;
 }
 
-complex *complex_sub(complex *a, complex *b, unsigned Num) {
-    complex *dif = malloc(sizeof(complex) * Num);
-    for (unsigned index = 0; index < Num; index++) {
-        (dif + index)->x = (a + index)->x - (b + index)->x;
-        (dif + index)->y = (a + index)->y - (b + index)->y;        
+sequence *complex_sub(sequence *a, sequence *b) {
+    if (a->len != b->len) {
+        fprintf(stderr, "The length of sequence a and sequence b isn't the same\n");
+        return NULL;
+    }
+    sequence *dif = malloc(sizeof(sequence) * a->len);
+    for (unsigned index = 0; index < a->len; index++) {
+        (dif->arr + index)->real = (a->arr + index)->real - (b->arr + index)->real;
+        (dif->arr + index)->imag = (a->arr + index)->imag - (b->arr + index)->imag;        
     }
     return dif;
 }
+
