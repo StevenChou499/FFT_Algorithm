@@ -1,7 +1,8 @@
 SRC = fft.h fft.c
 
-fft.o : SRC
-	gcc -s -o fft.o fft.h fft.c
+FFT32 : $(SRC) FFT32.c
+	gcc -o FFT32 $(SRC) FFT32.c -lm
+	./FFT32
 
 clean : 
-	rm fft.o
+	rm FFT32
