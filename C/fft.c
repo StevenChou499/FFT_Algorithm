@@ -1,5 +1,9 @@
 #include "fft.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define PI ((double) 3.1415926)
 
 sequence *conjugate(sequence *sqen) {
     if (sqen->len == 0) {
@@ -12,9 +16,13 @@ sequence *conjugate(sequence *sqen) {
     return sqen;
 }
 
+unsigned *bit_reverse(unsigned *index, unsigned len) {
+    
+}
+
 sequence *complex_add(sequence *a, sequence *b) {
     if (a->len != b->len) {
-        fprintf(stderr, "The length of sequence a and sequence b isn't the same\n");
+        fprintf(stderr, "The length of sequence a : %u and sequence b : %u isn't the same\n", a->len, b->len);
         return NULL;
     }
     sequence *sum = malloc(sizeof(sequence) * a->len);
@@ -27,7 +35,7 @@ sequence *complex_add(sequence *a, sequence *b) {
 
 sequence *complex_sub(sequence *a, sequence *b) {
     if (a->len != b->len) {
-        fprintf(stderr, "The length of sequence a and sequence b isn't the same\n");
+        fprintf(stderr, "The length of sequence a : %u and sequence b : %u isn't the same\n", a->len, b->len);
         return NULL;
     }
     sequence *dif = malloc(sizeof(sequence) * a->len);
@@ -38,3 +46,9 @@ sequence *complex_sub(sequence *a, sequence *b) {
     return dif;
 }
 
+complex W(unsigned r, unsigned N) {
+    complex cpx;
+    cpx.real = cos((-2 * PI * r) / N);
+    cpx.imag = sin((-2 * PI * r) / N);
+    return cpx;
+}

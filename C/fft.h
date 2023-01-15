@@ -1,8 +1,6 @@
 #ifndef FFT
 #define FFT
 
-#include <math.h>
-
 typedef struct complex {
     double real;
     double imag;
@@ -15,6 +13,9 @@ typedef struct sequence {
 
 // conjugate a sequence
 sequence *conjugate(sequence *sqen);
+
+// bit reverse an sequence of index
+unsigned *bit_reverse(unsigned *index, unsigned len);
 
 // an array of complex addition 
 sequence *complex_add(sequence *a, sequence *b);
