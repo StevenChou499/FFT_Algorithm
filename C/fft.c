@@ -24,6 +24,11 @@ void complex_mul(complex *a, complex *b, complex *mul) {
     return;
 }
 
+void complex_div_num(complex *a, unsigned num) {
+    a->real = a->real / num;
+    a->imag = a->imag / num;
+}
+
 sequence *sequence_init(unsigned length) {
     sequence *sqen = malloc(sizeof(sequence));
     if (sqen) {
@@ -48,6 +53,14 @@ sequence *conjugate(sequence *sqen) {
         (sqen->arr + index)->imag = -(sqen->arr + index)->imag;
     }
     return sqen;
+}
+
+void seq_cir_rev(sequence *sqen) {
+    for (unsigned index = 1; index < sqen->len ; index++) {
+        complex cpx = *(sqen->arr + index);
+        *(sqen->arr + index) = *(sqen->arr + (64 - index));
+        *(sqen->arr + (64 - index)) = cpx;
+    }
 }
 
 unsigned *bit_reverse(unsigned len) {
@@ -113,6 +126,12 @@ void sequence_mul(sequence *a, sequence *b, sequence *prod) {
     return;
 }
 
+void seq_div_num(sequence *x, unsigned num) {
+    for (unsigned index = 0; index < x->len; index++) {
+        complex_div_num(x->arr, num);
+    }
+}
+
 complex W(unsigned r, unsigned N) {
     complex cpx;
     cpx.real = cos((-2 * PI * r) / N);
@@ -156,10 +175,13 @@ sequence *FFT4(sequence *x) {
 void Butterfly(complex *X, complex *x, unsigned len) {
     complex tmp_mul[len / 2];
     complex tmp_W[len / 2];
+    if (len == 1) {
+        return;
+    }
     if (len == 2) {
         for (unsigned index = 0; index < (len / 2); index++) {
             tmp_W[index] = W(index, len);
-            complex_mul((x + index), (tmp_W + index), (tmp_mul + index));
+            complex_mul((x + index + (len / 2)), (tmp_W + index), (tmp_mul + index));
         }
         for (unsigned index = 0; index < (len / 2); index++) {
             complex_add((x + index), (tmp_mul + index), (X + index));
@@ -171,7 +193,7 @@ void Butterfly(complex *X, complex *x, unsigned len) {
     Butterfly((X + (len / 2)), (x + (len / 2)), (len / 2));
     for (unsigned index = 0; index < (len / 2); index++) {
         tmp_W[index] = W(index, len);
-        complex_mul((X + index), (tmp_W + index), (tmp_mul + index));
+        complex_mul((X + index + (len / 2)), (tmp_W + index), (tmp_mul + index));
     }
     for (unsigned index = 0; index < (len / 2); index++) {
         complex t = *(X + index);
@@ -204,7 +226,7 @@ sequence *General_FFT(sequence *x) {
     Butterfly((X->arr + (len / 2)), (x->arr + (len / 2)), (len / 2));
     for (unsigned index = 0; index < (len / 2); index++) {
         tmp_W[index] = W(index, len);
-        complex_mul((X->arr + index), (tmp_W + index), (tmp_mul + index));
+        complex_mul((X->arr + index + (len / 2)), (tmp_W + index), (tmp_mul + index));
     }
     for (unsigned index = 0; index < (len / 2); index++) {
         complex t = *(X->arr + index);
@@ -212,4 +234,15 @@ sequence *General_FFT(sequence *x) {
         complex_sub(&t, (tmp_mul + index), (X->arr + index + (len / 2)));
     }
     return X;
+}
+
+sequence *Inverse_FFT(sequence *X) {
+    if (X->len == 0) {
+        fprintf(stderr, "The lenght of input sequence is zero, returning NULL\n");
+        return NULL;
+    }
+    sequence *x = General_FFT(X);
+    seq_div_num(x, x->len);
+    seq_cir_rev(x);
+    return x;
 }
