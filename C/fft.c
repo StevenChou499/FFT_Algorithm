@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define PI ((double) 3.1415926)
+#define PI ((double) 3.14159265358979323846)
 
 void complex_add(complex *a, complex *b, complex *sum) {
     sum->real = a->real + b->real;
@@ -56,10 +56,10 @@ sequence *conjugate(sequence *sqen) {
 }
 
 void seq_cir_rev(sequence *sqen) {
-    for (unsigned index = 1; index < sqen->len ; index++) {
+    for (unsigned index = 1; index < sqen->len / 2 ; index++) {
         complex cpx = *(sqen->arr + index);
-        *(sqen->arr + index) = *(sqen->arr + (64 - index));
-        *(sqen->arr + (64 - index)) = cpx;
+        *(sqen->arr + index) = *(sqen->arr + (sqen->len - index));
+        *(sqen->arr + (sqen->len - index)) = cpx;
     }
 }
 
@@ -128,7 +128,7 @@ void sequence_mul(sequence *a, sequence *b, sequence *prod) {
 
 void seq_div_num(sequence *x, unsigned num) {
     for (unsigned index = 0; index < x->len; index++) {
-        complex_div_num(x->arr, num);
+        complex_div_num(x->arr + index, num);
     }
 }
 
